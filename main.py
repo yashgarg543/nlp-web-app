@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,redirect
 from db import database
 
 app = Flask(__name__)
@@ -27,7 +27,24 @@ def perform_registration():
 def perform_login():
     email = request.form.get('user_email')
     password = request.form.get('user_password')
-    return "logged in"
+    response = dbo.search(email,password)
+    if response:
+        return redirect('/profile')
+    else:
+        return render_template('login.html',message='incorrect email/password')
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+@app.route('/ner')
+def ner():
+    return render_template('ner.html')
+
+@app.route('/perform_ner',method=['post'])
+def perform_ner():
+    text = request.form.get('ner_text')
+
 
 app.run(debug=True) #debug = true makes the changes dynamic on the webpage
 
